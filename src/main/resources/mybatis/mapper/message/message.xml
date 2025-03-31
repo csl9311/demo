@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.message.dao.MessageDao">
+    
+    <insert id="upsertList" parameterType="com.example.demo.message.model.MessageDTO">
+        insert into sample.message (
+            key, lang, use, value
+        ) values
+        <foreach collection="list" item="item" index="index" open="(" close=")" separator="), (">
+        #{item.key}, #{item.lang}, #{item.use}, #{item.value}
+        </foreach>
+        ON CONFLICT (key, lang) 
+        DO UPDATE
+        SET VALUE = EXCLUDED.VALUE
+    </insert>
+
+    <select id="select" parameterType="map" resultType="com.example.demo.message.model.MessageDTO">
+        select *
+        from   sample.message
+        where  1=1
+        and    use = true
+    </select>
+</mapper>

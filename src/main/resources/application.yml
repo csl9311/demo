@@ -1,0 +1,59 @@
+spring:
+  profiles:
+    # system config (local, dev, prod)
+    active: local
+  application:
+    name: '${spring.profiles.active}-application-name'
+
+  datasource:
+    # driver-class-name: org.postgresql.Driver
+    # url: jdbc:postgresql://localhost:5432/postgres
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: jdbc:log4jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: 1q2w3e4r!@#
+    hikari:
+      maximum-pool-size: 4
+
+mybatis:
+  mapper-locations: classpath:mybatis/mapper/*/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
+server:
+  port: 80
+  servlet:
+    encoding:
+      force-response: true
+      charset: UTF-8
+
+logging:
+  level:
+    root: debug
+    com.example.demo: debug
+    jdbc:
+      connection: OFF
+      resultset: OFF
+      audit: OFF
+      sqlonly: off
+      sqltiming: OFF
+      resultsettable: off
+
+    org.springframework:
+        boot: info
+        web: info
+        beans: info
+    com.zaxxer: off
+    org.postgresql: off
+    org.mybatis.spring: off
+  pattern:
+    console: "%highlight([%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] [%c:%L] - %highlight(%msg%n))"
+
+environment:
+  project: C://Users/dev/Desktop/workspace
+  frontend: ${environment.project}/front
+  backend: ${environment.project}/demo
+  message:
+    path: ${environment.backend}/src/main/resources/i18n
+    name_rule: /message_{0}.json
+  fileUpload: ${environment.project}/upload/
