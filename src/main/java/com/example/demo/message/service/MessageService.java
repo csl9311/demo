@@ -20,9 +20,10 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.demo.message.dao.MessageDao;
+import com.example.demo.message.mapper.MessageMapper;
 import com.example.demo.message.model.MessageDTO;
 import com.example.demo.message.model.MessageVO;
 import com.example.demo.util.excel.ExcelUtil;
@@ -38,7 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 public class MessageService {
 
     @Autowired
-    private MessageDao dao;
+    private MessageMapper mapper;
 
     @Value("${environment.message.path}")
     private String messagePath;
@@ -51,17 +52,19 @@ public class MessageService {
 
     // DB 목록 조회
 	public List<MessageDTO> getMessageList(Map<String, Object> param) {
-        return dao.select(param);
+        return mapper.select(param);
 	}
 
     // json 파일 읽기
     public List<Map<String, Object>> getMessageFromJsonFile(Map<String, Object> param) throws Exception {
         File messageDir = new File(messagePath);
         if (!messageDir.exists()) {
+            log.error("messagePath not exists: {}", messagePath);
             return null;
         }
 
         if (!messageDir.isDirectory()) {
+            log.error("messagePath is not directory: {}", messagePath);
             return null;
         }
 
@@ -75,8 +78,6 @@ public class MessageService {
             if (fileName.contains("_")) {
                 language = fileName.replace(".json", "").split("_")[1];
             }
-
-            // languageList.put(language);
 
             JSONObject json = fileUtil.getJsonFileData(file);
             for (String key : json.keySet()) {
@@ -141,7 +142,6 @@ public class MessageService {
             if (fileName.contains("_")) {
                 language = fileName.replace(".json", "").split("_")[1];
             }
-            
 
             boolean exist = !langSet.add(language);
             if (exist) {
@@ -174,17 +174,24 @@ public class MessageService {
             }
         }
 
+        // sort list
+        upsertList.sort((o1, o2) -> {
+            String o1Key = o1.getKey();
+            String o2Key = o2.getKey();
+            return StringUtils.compare(o1Key, o2Key);
+        });
+
         // DB upsert
-        int subSize = 100;
+        // int result = mapper.upsertList(upsertList);
+        int subSize = 1000;
         int result = 0;
         for (int i = 0; i < upsertList.size(); i += subSize) {
             int toIndex = i + subSize <= upsertList.size() ? i + subSize : upsertList.size();
 
             List<MessageDTO> subList = upsertList.subList(i, toIndex);
             log.debug("fromIndex: {}, toIndex: {}, subList size: {}", String.format("%-5d", i), String.format("%-5d", toIndex), subList.size());
-            result += dao.upsertList(subList);
+            result += mapper.upsertList(subList);
         }
-        // int result = dao.upsertList(upsertList);
         return result;
     }
 
@@ -284,11 +291,23 @@ public class MessageService {
         return res;
     }
 
-    public List<Map<String, Object>> uploadExcelToDB(MultipartFile[] files) throws Exception {
-        
+    public List<Map<String, Object>> uploadExcelToDB(@RequestParam MultipartFile[] files) throws Exception {
         List<Map<String, Object>> list = new ArrayList<>();
+
+        if (files == null) {
+            return list;
+        }
+
         for (MultipartFile file: files) {
             Map<String, Object> uploadRes = fileUtil.upload(file);
+            
+            // Workbook workbook = new XSSFWorkbook(file.getInputStream());
+            // Iterator<Sheet> iter = workbook.sheetIterator();
+
+            // while (iter.hasNext()) {
+            //     Sheet sheet = iter.next();
+            // }
+
             list.add(uploadRes);
         }
 

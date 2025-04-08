@@ -66,26 +66,20 @@ public class FileUtil {
     }
 
 	public Map<String, Object> upload(MultipartFile file) throws Exception {
-
-        // // 이미지 파일만 업로드
-        // if (!Objects.requireNonNull(uploadFile.getContentType()).startsWith("image"))
-        // {
-        // log.warn("this file is not image type");
-        // return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        // }
         try {
             File uploadDir = new File(uploadPath);
             if (!uploadDir.exists()) {
                 uploadDir.mkdirs();
             }
 
+            String contentType = file.getContentType();
             String orginalName = file.getOriginalFilename();
-            if (orginalName == null) {
-                throw new Exception("");
-            }
+
+            log.debug("orginalName: {}", orginalName);
+            log.debug("contentType: {}", contentType);
 
             String fileName = orginalName.substring(orginalName.lastIndexOf("\\") + 1);
-            log.info("fileName: " + fileName);
+            // log.info("fileName: " + fileName);
 
             // UUID
             String uuid = UUID.randomUUID().toString();
@@ -98,8 +92,9 @@ public class FileUtil {
 
             Map<String, Object> res = new HashMap<>();
             // res.put("folderPath", folderPath);
+            res.put("uploadPath", uploadPath);
             res.put("fileName", fileName);
-            res.put("uuid", uuid);
+            res.put("uuid"    , uuid    );
 
             return res;
         } catch (IOException e) {

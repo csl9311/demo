@@ -1,4 +1,4 @@
-package com.example.demo.message.dao;
+package com.example.demo.message.mapper;
 
 import java.util.List;
 import java.util.Map;
@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 import com.example.demo.message.model.MessageDTO;
 
 @Mapper
-public interface MessageDao {
+public interface MessageMapper {
 
     int upsertList(List<MessageDTO> dataList);
 

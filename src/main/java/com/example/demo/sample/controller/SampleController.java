@@ -1,5 +1,6 @@
 package com.example.demo.sample.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections4.MapUtils;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.sample.service.SampleService;
 
@@ -86,5 +88,10 @@ public class SampleController {
         headers.add("Content-Disposition", "attachment; filename=" + fileName + ".xlsx");
         headers.add("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         return new ResponseEntity<>(bytes, headers, HttpStatus.OK);
+    }
+
+    @PostMapping("/uploadFile")
+    public ResponseEntity<List<Map<String, Object>>> uploadFile(MultipartFile[] files) throws Exception {
+        return new ResponseEntity<>(service.uploadFile(files), HttpStatus.OK);
     }
 }

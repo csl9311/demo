@@ -140,7 +140,7 @@ public class ExcelUtil {
                         return Integer.compare(o1Annotation.sort(), o2Annotation.sort());
                     })
                     .collect(Collectors.toList());
-            log.debug("fields count: {}", fields.size());
+            // log.debug("fields count: {}", fields.size());
 
             Row header = sheet.createRow(0);
 

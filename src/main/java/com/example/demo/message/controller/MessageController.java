@@ -43,7 +43,7 @@ public class MessageController {
 
     @PutMapping("/put")
     public ResponseEntity<Map<String, Object>> upsertList(@RequestBody Map<String, Object> param) throws Exception {
-        log.debug("param: {}", param);
+        // log.debug("param: {}", param);
         int result = service.upsertList(param);
 
         Map<String, Object> map = new HashMap<>();
@@ -56,10 +56,6 @@ public class MessageController {
     public ResponseEntity<List<Map<String, Object>>> getMessageFromJsonFile(@RequestBody Map<String, Object> param) throws Exception {
         log.debug("param: {}", param);
         List<Map<String, Object>> dataList = service.getMessageFromJsonFile(param);
-
-        if (CollectionUtils.isEmpty(dataList)) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok(dataList);
     }
 
@@ -92,8 +88,8 @@ public class MessageController {
     }
 
     @PostMapping("/uploadExcelToDB")
-    public ResponseEntity<List<Map<String, Object>>> uploadExcelToDB(MultipartFile[] uploadFiles) throws Exception {
-        List<Map<String, Object>> list = service.uploadExcelToDB(uploadFiles);
+    public ResponseEntity<List<Map<String, Object>>> uploadExcelToDB(MultipartFile[] files) throws Exception {
+        List<Map<String, Object>> list = service.uploadExcelToDB(files);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
