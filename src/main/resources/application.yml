@@ -5,11 +5,12 @@ spring:
   application:
     name: '${spring.profiles.active}-application-name'
 
+  # DB
   datasource:
     # driver-class-name: org.postgresql.Driver
     # url: jdbc:postgresql://localhost:5432/postgres
     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
-    url: jdbc:log4jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:log4jdbc:postgresql://localhost:5432/sample
     username: postgres
     password: 1q2w3e4r!@#
     hikari:
@@ -18,42 +19,54 @@ spring:
 mybatis:
   mapper-locations: classpath:mybatis/mapper/*/*.xml
   configuration:
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl # mybatis preparing, parameters 로그 제외
     map-underscore-to-camel-case: true
 
+# server
 server:
-  port: 80
+  port: 8080
   servlet:
     encoding:
       force-response: true
       charset: UTF-8
 
+# slf4j
 logging:
+  pattern:
+    console: "%highlight([%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] [%c:%-3L] - %highlight(%msg%n))"
+    file: "%highlight([%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] [%c:%-3L] - %highlight(%msg%n))"
+    rolling-file-name: "/logs/log.%d{yyyy-MM-dd}.%i"
+
+  file:
+    name: /logs/log.log
+    max-history: 300
+
   level:
-    root: debug
-    com.example.demo: debug
+    root: DEBUG
+    com.example.demo: DEBUG
     jdbc:
-      connection: OFF
-      resultset: OFF
-      audit: OFF
-      sqlonly: off
-      sqltiming: OFF
-      resultsettable: off
+      connection: ERROR
+      resultset: ERROR
+      audit: ERROR
+      sqlonly: ERROR
+      sqltiming: ERROR
+      resultsettable: DEBUG
 
     org.springframework:
-        boot: info
-        web: info
-        beans: info
-    com.zaxxer: off
-    org.postgresql: off
-    org.mybatis.spring: off
-  pattern:
-    console: "%highlight([%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] [%c:%L] - %highlight(%msg%n))"
+        boot: INFO
+        web: INFO
+        beans: INFO
+    com.zaxxer: ERROR
+    org.postgresql: ERROR
+    org.springframework.jdbc: ERROR
+    org.mybatis.spring: ERROR
+    org.apache.tomcat.util: INFO
+    org.apache.catalina.core: INFO
+    org.apache.poi: INFO
 
 environment:
-  project: C://Users/dev/Desktop/workspace
-  frontend: ${environment.project}/front
-  backend: ${environment.project}/demo
+  AES_KEY: MZo6v+5eHwHsizVGyG6C7A==
   message:
-    path: ${environment.backend}/src/main/resources/i18n
+    path: src/main/resources/i18n
     name_rule: /message_{0}.json
-  fileUpload: ${environment.project}/upload/
+  fileUpload: C://Users/dev/Desktop/workspace/upload/
