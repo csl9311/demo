@@ -1,20 +1,19 @@
 package com.example.demo.aop;
 
+import java.math.BigInteger;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,15 +23,15 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public class LoggingAspect {
-    private int logSeq = 0;
-    private int processSeq = 0;
+    private BigInteger logSeq = BigInteger.ZERO;
+    private BigInteger processSeq = BigInteger.ZERO;
     
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Around("execution(* com.example.demo.*.controller..*(..))")
-    public Object logAround(ProceedingJoinPoint joinPoint) throws Throwable {
-        logSeq++;
-        processSeq = 0;
+    public Object controllerAround(ProceedingJoinPoint joinPoint) throws Throwable {
+        logSeq = logSeq.add(BigInteger.ONE);
+        processSeq = BigInteger.ZERO;
 
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (attributes == null) {
@@ -44,8 +43,7 @@ public class LoggingAspect {
         HttpServletRequest request = attributes.getRequest();
 
         String method = request.getMethod();
-        String uri = request.getRequestURI();
-
+        String uri    = request.getRequestURI();
 
         log.info("{}. [REQUEST ] {} {}", logSeq, uri, method);
         log.info("{}. [PARAMS  ] {}"   , logSeq, toJsonSafe(joinPoint.getArgs()));
@@ -74,16 +72,6 @@ public class LoggingAspect {
         return result;
     }
 
-    @Before("execution(* com.example.demo..*(..))")
-    public void logBefore(JoinPoint joinPoint) {
-        log.debug("[Before] " + joinPoint.getSignature().getName());
-    }
-
-    @After("execution(* com.example.demo..*(..))")
-    public void logAfter(JoinPoint joinPoint) {
-        log.debug("[After] " + joinPoint.getSignature().getName());
-    }
-
     @Around("execution(* com.example.demo..*(..))")
     public Object allAround(ProceedingJoinPoint joinPoint) throws Throwable {
         LocalDateTime ldt = LocalDateTime.now();
@@ -95,7 +83,8 @@ public class LoggingAspect {
         String target = joinPoint.getTarget().toString();
                target = target.substring(0, target.indexOf("@"));
         String name = joinPoint.getSignature().getName();
-        processSeq++;
+
+        processSeq = processSeq.add(BigInteger.ONE);
         log.info("{}. {}. [CLASS   ] {}"   , logSeq, processSeq, target);
         log.info("{}. {}. [NAME    ] {}"   , logSeq, processSeq, name);
         log.info("{}. {}. [DURATION] {}.{}", logSeq, processSeq, duration.toSeconds(), nanoSecond);
@@ -105,7 +94,7 @@ public class LoggingAspect {
     private Object toJsonSafe(Object obj) {
         try {
             return objectMapper.writeValueAsString(obj);
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             return "[unserializable]";
         }
     }
