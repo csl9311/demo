@@ -5,6 +5,32 @@ spring:
   application:
     name: '${spring.profiles.active}-application-name'
 
+  # mail
+  # mail:
+  #   host: smtp.gmail.com
+  #   port: 587
+  #   username: 931csl@gmail.com
+  #   password: 1q2w3e4r!@#
+  #   properties:
+  #     mail:
+  #       smtp:
+  #         auth: true
+  #         starttls:
+  #           enable: true
+
+  # # OAuth2
+  # security:
+  #   oauth2:
+  #     client:
+  #       registration:
+  #         google:
+  #           client-id: your-google-client-id
+  #           client-secret: your-google-client-secret
+  #           redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+  #           scope:
+  #             - email
+  #             - profile
+
   # DB
   datasource:
     # driver-class-name: org.postgresql.Driver
@@ -33,8 +59,8 @@ server:
 # slf4j
 logging:
   pattern:
-    console: "%highlight([%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] [%c:%-3L] - %highlight(%msg%n))"
-    file: "%highlight([%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] [%c:%-3L] - %highlight(%msg%n))"
+    console: "%highlight([%-5level] [%d{yyyy-MM-dd HH:mm:ss.SSS}] [%c{0}]:%-3L - %msg%n)"
+    file   : "%highlight([%-5level] [%d{yyyy-MM-dd HH:mm:ss.SSS}] [%c] [%M] [%-3L] - %msg%n)"
     rolling-file-name: "/logs/log.%d{yyyy-MM-dd}.%i"
 
   file:
@@ -43,7 +69,7 @@ logging:
 
   level:
     root: DEBUG
-    com.example.demo: DEBUG
+    com.sample.backend: DEBUG
     jdbc:
       connection: ERROR
       resultset: ERROR
@@ -65,7 +91,7 @@ logging:
     org.apache.poi: INFO
 
 environment:
-  AES_KEY: MZo6v+5eHwHsizVGyG6C7A==
+  AES_KEY: Hf6hvV2pJAmleFyoxcm62A==
   message:
     path: src/main/resources/i18n
     name_rule: /message_{0}.json

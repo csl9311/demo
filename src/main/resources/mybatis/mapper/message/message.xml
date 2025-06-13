@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.example.demo.message.mapper.MessageMapper">
+<mapper namespace="com.sample.backend.message.mapper.MessageMapper">
     
-    <insert id="upsertList" parameterType="com.example.demo.message.model.MessageDTO">
+    <insert id="upsertList" parameterType="com.sample.backend.message.model.MessageDTO">
         insert into message (key, lang, use, value) values
         <foreach collection="list" item="item" index="index" open="(" close=")" separator="), (">#{item.key}, #{item.lang}, #{item.use}, #{item.value}</foreach>
         ON CONFLICT (key, lang) 
@@ -11,7 +11,7 @@
         SET VALUE = EXCLUDED.VALUE
     </insert>
 
-    <select id="select" parameterType="map" resultType="com.example.demo.message.model.MessageDTO">
+    <select id="select" parameterType="map" resultType="com.sample.backend.message.model.MessageDTO">
         select *
         from   message
         where  1=1

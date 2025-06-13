@@ -486,7 +486,7 @@
   "common.word.snort.engine.used" : "침입탐지엔진 사용",
   "common.word.yara.engine.used" : "악성코드탐지엔진 사용",
   "common.word.setting" : "설정",
-  "`common.word.cloud`" : "클라우드",
+  "common.word.cloud" : "클라우드",
   "common.word.index" : "인덱스",
   "common.word.application.payload.save" : "어플리케이션 페이로드 저장",
   "common.word.ip.block" : "IP 블럭",
